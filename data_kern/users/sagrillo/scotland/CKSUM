@@ -1,0 +1,75 @@
+CHEKSUMS for files from /users/sagrillo/scotland
+at https://kern.humdrum.org
+downloaded on Tue Jun 30 05:33:54 PDT 2020
+A current version of these files may be downloaded using the address:
+   https://kern.humdrum.org/data?f=zip&l=/users/sagrillo/scotland
+==================================================================
+
+The following lines list the checksum values for all score
+files in this downloaded zip archive.
+
+A "checksum" value is an error-checking mechanism that may
+assist in determining whether a file has been modified or data
+garbled due to transmission or faulty storage.  The "checksum A"
+value uses the POSIX 2 checksum algorithm.  The "checksum B" value
+uses the CCITT cyclic redundancy check algorithm.  
+
+Note that checksum commands will differ for ASCII files formatted
+in DOS/Windows style or Unix/Macintosh formatted text.  The files in
+this ZIP archive were in Unix/Macintosh line formatting style when the
+checksums were compiled.
+
+checksum A   checksum B    filename
+===================================================================
+
+609315327 785 H0001A.krn
+3200748806 561 HA002.krn
+1809611656 714 HA003.krn
+1716333899 564 HA004.krn
+1137690699 496 HA005.krn
+1524973081 793 HA006.krn
+772865670 696 HA007.krn
+129086515 571 HA008.krn
+2751008959 656 HA009.krn
+1203837165 504 HA010.krn
+2189928788 423 HA011.krn
+3031662335 612 HA012.krn
+539293142 557 HA013.krn
+1438863335 639 HA014.krn
+2337115527 483 HA015.krn
+541908696 662 HA016.krn
+1921134227 738 HA017.krn
+3890941141 507 HA018.krn
+2254990386 528 HA019.krn
+1163820377 753 HA020.krn
+2003176308 593 HA021.krn
+2562234521 618 HA022.krn
+1456538483 657 HA023.krn
+565771789 885 HA024.krn
+2162758371 725 HA025.krn
+3885558460 577 HA026.krn
+3072102279 618 HA027.krn
+3220377472 599 HA028.krn
+2901857087 631 HA029.krn
+3819719908 605 HA030.krn
+341399707 623 HA031.krn
+4280148612 642 HA032.krn
+2266933806 858 HA033.krn
+869371925 503 HA034.krn
+3637893368 1186 HA035.krn
+144246306 679 HA036.krn
+1772743251 692 HA037.krn
+2174991967 846 HA038.krn
+1149693536 751 HA039.krn
+2480664311 830 HA040.krn
+1966723918 761 HA041.krn
+2181581231 577 HA042.krn
+1435705370 774 HA043.krn
+1387025208 625 HA044.krn
+1350145150 673 HA045.krn
+1207013058 662 HA046.krn
+4106431119 744 HA047.krn
+1372325680 648 HA048.krn
+618134115 665 HA049.krn
+1021660499 545 HA050.krn
+2260020249 540 HA051.krn

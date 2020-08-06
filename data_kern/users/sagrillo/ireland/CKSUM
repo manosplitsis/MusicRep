@@ -1,0 +1,86 @@
+CHEKSUMS for files from /users/sagrillo/ireland
+at https://kern.humdrum.org
+downloaded on Tue Jun 30 05:33:11 PDT 2020
+A current version of these files may be downloaded using the address:
+   https://kern.humdrum.org/data?f=zip&l=/users/sagrillo/ireland
+==================================================================
+
+The following lines list the checksum values for all score
+files in this downloaded zip archive.
+
+A "checksum" value is an error-checking mechanism that may
+assist in determining whether a file has been modified or data
+garbled due to transmission or faulty storage.  The "checksum A"
+value uses the POSIX 2 checksum algorithm.  The "checksum B" value
+uses the CCITT cyclic redundancy check algorithm.  
+
+Note that checksum commands will differ for ASCII files formatted
+in DOS/Windows style or Unix/Macintosh formatted text.  The files in
+this ZIP archive were in Unix/Macintosh line formatting style when the
+checksums were compiled.
+
+checksum A   checksum B    filename
+===================================================================
+
+4128149380 1537 i0500.krn
+3082948876 1638 i0501.krn
+3232719338 1559 i0502.krn
+2266360524 1720 i0503.krn
+3147637091 1388 i0504.krn
+4251264422 1350 i0505.krn
+63555864 1572 i0506.krn
+3900972675 1442 i0507.krn
+4209872785 1416 i0508.krn
+2171500813 1490 i0509.krn
+3194171498 1399 i0510.krn
+1269371221 1343 i0511.krn
+1471757101 1269 i0512.krn
+2847510911 1562 i0513.krn
+2081779848 1625 i0514.krn
+496256335 1675 i0515.krn
+3001571742 1329 i0516.krn
+2086410815 1320 i0517.krn
+765860152 1638 i0518.krn
+4098931790 1318 i0519.krn
+1588726825 1486 i0520.krn
+4248535273 1608 i0521.krn
+870093750 1821 i0522.krn
+2569732672 1456 i0523.krn
+2164283952 1676 i0524.krn
+705931496 1336 i0525.krn
+217452346 1634 i0526.krn
+2811194374 1595 i0527.krn
+1878851200 1520 i0528.krn
+2000863318 1387 i0529.krn
+715597629 1185 i0530.krn
+647591008 1705 i0531.krn
+319789124 1476 i0532.krn
+753167684 1284 i0533.krn
+1247645246 1791 i0534.krn
+2684253991 1569 i0535.krn
+2869241565 1438 i0536.krn
+3536017811 1548 i0537.krn
+3403320318 1682 i0538.krn
+1606607116 1519 i0539.krn
+1638779313 1321 i0540.krn
+2948503141 1860 i0541.krn
+3735624663 1598 i0542.krn
+79224121 1160 i0543.krn
+1206511947 1341 i0544.krn
+2760089206 1716 i0545.krn
+1682566239 1824 i0546.krn
+4134270681 1690 i0547.krn
+2172550691 1280 i0548.krn
+2716367156 1655 i0549.krn
+3080034380 1475 i0550.krn
+1037986638 1492 i0551.krn
+329628790 1668 i0552.krn
+3543122980 1290 i0553.krn
+884990336 1651 i0554.krn
+1338193746 1652 i0555.krn
+3925678196 1474 i0556.krn
+3884471409 1426 i0557.krn
+2422205749 1456 i0558.krn
+345849918 1604 i0559.krn
+220658228 1858 i0560.krn
+250924727 1290 i0561.krn

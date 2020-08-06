@@ -1,0 +1,92 @@
+!!!OTL: Duncan Davison
+!!!id: HA026
+**kern
+*clefF4
+*k[]
+*C:
+*M2/2
+{16c
+=1
+8.c
+16e
+8.g
+16a
+8.g
+16e
+8.g}
+{16a
+=2
+8.c
+16e
+8.cc
+16a
+8.g
+16e
+8.d}
+{16e
+=3
+8.c
+16e
+8.g
+16a
+8.g
+16e
+8.g}
+{16ee
+=4
+8.dd
+16cc
+8dd
+8ee
+8.cc
+16cc
+8.cc}
+{16ff
+=5
+8.ee
+16dd
+16cc
+16dd
+16ee
+16ff
+8gg
+8ee
+8dd}
+{8cc
+=6
+8b
+8g
+8dd
+8g
+8.b
+16cc
+8dd}
+{8ff
+=7
+8.ee
+16dd
+16cc
+16dd
+16ee
+16ff
+8gg
+8ee
+8dd}
+{8cc
+=8
+8.g
+16cc
+8.dd
+16ee
+8.cc
+16cc
+8.cc}
+==
+*-
+!!!minrhy: 16
+!!!meter: 2/2  
+!!!cut: Duncan Davison
+!!!key: HA026  16  C 2/2  
+!!!bem: Vorschlge
+!!!fog: a--aw-av-b--c--d--c--e--
+!! Haydn: Volksliedbearbeitungen, Bd1

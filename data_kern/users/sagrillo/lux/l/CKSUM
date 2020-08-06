@@ -1,0 +1,68 @@
+CHEKSUMS for files from /users/sagrillo/lux/l
+at https://kern.humdrum.org
+downloaded on Sat Jun 13 02:05:37 PDT 2020
+A current version of these files may be downloaded using the address:
+   https://kern.humdrum.org/data?f=zip&l=/users/sagrillo/lux/l
+==================================================================
+
+The following lines list the checksum values for all score
+files in this downloaded zip archive.
+
+A "checksum" value is an error-checking mechanism that may
+assist in determining whether a file has been modified or data
+garbled due to transmission or faulty storage.  The "checksum A"
+value uses the POSIX 2 checksum algorithm.  The "checksum B" value
+uses the CCITT cyclic redundancy check algorithm.  
+
+Note that checksum commands will differ for ASCII files formatted
+in DOS/Windows style or Unix/Macintosh formatted text.  The files in
+this ZIP archive were in Unix/Macintosh line formatting style when the
+checksums were compiled.
+
+checksum A   checksum B    filename
+===================================================================
+
+1113356445 1283 l0001.krn
+401408224 1210 l0002.krn
+3621319148 1327 l0003.krn
+3097314800 1387 l0004.krn
+1660057899 1086 l0005.krn
+2000756307 1188 l0006.krn
+810040651 1333 l0007.krn
+252020233 1190 l0008.krn
+382579902 1247 l0009.krn
+1516198845 1424 l0010.krn
+1362246134 1871 l0011.krn
+443594638 1301 l0012.krn
+2263825945 1346 l0013.krn
+24079699 1735 l0014.krn
+798943702 1451 l0015.krn
+4007973457 1907 l0016.krn
+572841447 1483 l0017.krn
+372589632 1174 l0018.krn
+2957925414 1412 l0019.krn
+1237087045 708 l0020.krn
+3122333566 1857 l0021.krn
+2754714156 1292 l0021a.krn
+2152801012 1233 l0021b.krn
+2613730265 1325 l0022v.krn
+4129024072 1228 l0023.krn
+3596857524 1371 l0024.krn
+2341589382 1413 l0025.krn
+2917220484 1522 l0026.krn
+3546669962 1366 l0027v.krn
+539162465 1309 l0028.krn
+2299481512 1532 l0029.krn
+3690781920 1345 l0030.krn
+3610875630 1246 l0031.krn
+3334786361 1299 l0032.krn
+2804767146 1283 l0033.krn
+272501973 1343 l0034.krn
+1520488467 1360 l0035v.krn
+4186692465 1487 l0036.krn
+3575207669 1470 l0037.krn
+3668371053 1327 l0038.krn
+1787084996 1866 l0039v.krn
+1059256789 1288 l0040.krn
+26553888 1289 l0041.krn
+9224832 1416 l0042.krn

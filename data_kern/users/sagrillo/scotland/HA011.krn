@@ -1,0 +1,64 @@
+!!!OTL: Barbara Allen
+!!!id: HA011
+**kern
+*clefG2
+*k[f#c#]
+*D:
+*M4/4
+{8.a
+16a
+=1
+4dd
+8.dd
+16ee
+4ff#
+8ee
+8dd
+=2
+4cc#
+8.ee
+16ff#
+4gg}
+{8ff#
+8ee
+=3
+4.dd
+8ee
+8ff#
+8ee
+8dd
+8cc#
+=4
+4a
+2dd}
+{4cc#
+=5
+4a
+4cc#
+4g
+8a
+8g
+=6
+4.f#
+8g
+4a}
+{8dd
+8cc#
+=7
+4.a
+8g
+4f#
+8f#
+8g
+=8
+4a
+2dd}
+==
+*-
+!!!minrhy: 16
+!!!meter: 4/4
+!!!cut: Barbara Allen
+!!!key: HA011  16  d 4/4
+!!!bem: Melismen
+!!!fog: a--b--c--d--
+!! Haydn: Volksliedbearbeitungen, Bd1

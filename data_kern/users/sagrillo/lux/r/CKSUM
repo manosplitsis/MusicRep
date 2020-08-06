@@ -1,0 +1,44 @@
+CHEKSUMS for files from /users/sagrillo/lux/r
+at https://kern.humdrum.org
+downloaded on Sat Jun 13 02:05:37 PDT 2020
+A current version of these files may be downloaded using the address:
+   https://kern.humdrum.org/data?f=zip&l=/users/sagrillo/lux/r
+==================================================================
+
+The following lines list the checksum values for all score
+files in this downloaded zip archive.
+
+A "checksum" value is an error-checking mechanism that may
+assist in determining whether a file has been modified or data
+garbled due to transmission or faulty storage.  The "checksum A"
+value uses the POSIX 2 checksum algorithm.  The "checksum B" value
+uses the CCITT cyclic redundancy check algorithm.  
+
+Note that checksum commands will differ for ASCII files formatted
+in DOS/Windows style or Unix/Macintosh formatted text.  The files in
+this ZIP archive were in Unix/Macintosh line formatting style when the
+checksums were compiled.
+
+checksum A   checksum B    filename
+===================================================================
+
+3727580667 1394 r0044.krn
+1726309125 1327 r0045.krn
+1567080030 1225 r0046.krn
+2961602634 1427 r0047.krn
+2616573655 1279 r0048.krn
+1366535130 1516 r0049.krn
+3209117471 1271 r0050.krn
+3810217439 1328 r0051.krn
+602322307 1249 r0052.krn
+1599505398 1207 r0053.krn
+4254030897 1675 r0054.krn
+2126684637 1288 r0055.krn
+2673529174 1542 r0056.krn
+68705181 1392 r0057.krn
+2892354201 1351 r0058.krn
+1316138229 1636 r0059.krn
+3153051314 1457 r0060.krn
+2601518158 1901 r0061.krn
+1558533265 1246 r0062.krn
+968347295 1316 r0063.krn
