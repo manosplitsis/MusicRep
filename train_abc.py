@@ -344,9 +344,106 @@ def train_abc2(text_path,batch_size,seq_length,load=False,model_path='',lstm_no=
                                                   histogram_freq = 1,
                                                   profile_batch = '200,400')
     callbacks_list=[checkpoint,tensorboard_callback,csvlog,lr_scheduler]
-    model=build_model2_emb(batch_size, seq_length, n_vocab,lstm_size=lstm_size,lstm_no=lstm_no,dropout_rate=dropout)
-    optimizer=tf.keras.optimizers.Adam(learning_rate=0.001)
-    model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer,metrics=['accuracy'])
+    if load:
+        print('loading model')
+        model=load_model(model_path)
+        model.layers[0].trainable=False
+    else:
+        model=build_model2_emb(batch_size, seq_length, n_vocab,lstm_size=lstm_size,lstm_no=lstm_no,dropout_rate=dropout)
+        optimizer=tf.keras.optimizers.Adam(learning_rate=0.001)
+        model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer,metrics=['accuracy'])
+    model.summary()
+    model.fit(train_loader,validation_data=val_loader,initial_epoch=0, epochs=epochs,callbacks=callbacks_list)
+    
+def train_abc3(text_path,batch_size,seq_length,load=False,model_path='',lstm_no=1,lstm_size=32,dropout=0.2,epochs=200,split_pieces=False):
+    #date to be used for archiving model and training history
+    date=datetime.datetime.utcnow()
+    gdate=date.astimezone(pytz.timezone('Europe/Athens'))
+    fdate=gdate.strftime('%d-%m-%y %H:%M')
+    fday=gdate.strftime('%d-%m-%y')
+    ftime=gdate.strftime('%H_%M')
+    print( fday)
+    print(ftime)
+    model_info=f'_model_n{lstm_no}_s{lstm_size}_d{dropout}_sl{seq_length}_bs{batch_size}'
+    text_name=os.path.basename(text_path)
+    experiment_path=os.path.join('experiments',fday,text_name+model_info,'')
+    logdir=os.path.join(experiment_path,'logs','')
+    os.makedirs(experiment_path+'/models',exist_ok=True)
+    os.makedirs(experiment_path+'/logs',exist_ok=True)
+    text=load_doc(text_path)
+    chars = sorted(list(set(text.split())))
+    print('total chars:', len(chars))
+    n_vocab=len(chars)
+    char_indices = dict((c, i) for i, c in enumerate(chars))
+    #indices_char = dict((i, c) for i, c in enumerate(chars))
+    with open(experiment_path+'/dictionary', 'wb') as filepath:
+      pickle.dump(char_indices, filepath)
+    val_split=0.1
+
+    if split_pieces:
+    
+        pieces=text.split('\n\n')
+        del text
+        for i,piece in enumerate(pieces):
+            pieces[i]=piece.split()
+        
+        pieces_train=pieces[0:len(pieces)-int(val_split*len(pieces))]
+        pieces_validate=pieces[len(pieces)-int(val_split*len(pieces)):len(pieces)]
+        train_loader=Data_Gen_Text_Pieces(pieces_train,batch_size=batch_size,seq_length=seq_length,n_vocab=n_vocab,dictionary=char_indices)
+        val_loader=Data_Gen_Text_Pieces(pieces_validate,batch_size=batch_size,seq_length=seq_length,n_vocab=n_vocab,dictionary=char_indices)
+
+    else:
+        #text=text[0:int(len(text)/4)]
+        text=text.split()
+        text_train=text[0:len(text)-int(val_split*len(text))]
+        text_validate=text[len(text)-int(val_split*len(text)):len(text)]
+        train_loader=Data_Gen_Text(text_train,batch_size=batch_size,seq_length=seq_length,n_vocab=n_vocab,dictionary=char_indices)
+        val_loader=Data_Gen_Text(text_validate,batch_size=batch_size,seq_length=seq_length,n_vocab=n_vocab,dictionary=char_indices)
+
+    
+    
+    
+    
+
+    
+    filepath = os.path.abspath(experiment_path+'/models/model-{epoch:03d}-{loss:.4f}-{val_loss:.4f}')
+    checkpoint = ModelCheckpoint(
+        filepath,
+        save_weights_only=False,
+        period=2, #Every 10 epochs
+        monitor='loss',
+        verbose=2,
+        save_best_only=False,
+        mode='min'
+    )
+    # learning rate scheduler
+    def schedule(epoch):
+        if epoch < 5:
+             new_lr = .003
+        elif epoch >= 5:
+             new_lr = 0.003 * 0.97 ** (epoch-4) 
+        
+        
+        print("\nLR at epoch {} = {}  \n".format(epoch,new_lr))
+        return new_lr
+    lr_scheduler = tf.keras.callbacks.LearningRateScheduler(schedule)
+
+
+    csvlog=tf.keras.callbacks.CSVLogger(experiment_path+'/logs.csv', separator=",", append=False)
+    
+    
+    
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir = logdir,
+                                                  histogram_freq = 1,
+                                                  profile_batch = '200,400')
+    callbacks_list=[checkpoint,tensorboard_callback,csvlog,lr_scheduler]
+    if load:
+        print('loading model')
+        model=load_model(model_path)
+    else:
+        model=build_model2_emb(batch_size, seq_length, n_vocab,lstm_size=lstm_size,lstm_no=lstm_no,dropout_rate=dropout)
+        optimizer=tf.keras.optimizers.Adam(learning_rate=0.001)
+        model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer,metrics=['accuracy'])
     model.summary()
     model.fit(train_loader,validation_data=val_loader,initial_epoch=0, epochs=epochs,callbacks=callbacks_list)
 #%%
@@ -356,5 +453,7 @@ if __name__=='__main__':
     #get_kern_text('data1','kern_text.txt')
     #removeComments('kern_text.txt', 'kern_text_nocomment.txt')
     text_path='data_v3_startstop'
-    train_abc2(text_path,256,64,lstm_no=3,lstm_size=256,dropout=0.2,epochs=100)
+    model_path='experiments/13-08-20/data_v3_startstop_model_n3_s256_d0.2_sl64_bs256/models/model-006-0.9513-1.2259'
+    train_abc3(text_path,256,64,lstm_no=1,lstm_size=32,dropout=0.2,epochs=100)
+    
     
