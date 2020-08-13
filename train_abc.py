@@ -366,7 +366,11 @@ def train_abc3(text_path,batch_size,seq_length,load=False,model_path='',lstm_no=
     print(ftime)
     model_info=f'_model_n{lstm_no}_s{lstm_size}_d{dropout}_sl{seq_length}_bs{batch_size}'
     text_name=os.path.basename(text_path)
-    experiment_path=os.path.join('experiments',fday,text_name+model_info,'')
+    run=0
+    experiment_path=os.path.join('experiments',fday,text_name+model_info+'_run'+str(run))
+    while os.path.exists(experiment_path):
+        run+=1
+        experiment_path=experiment_path[:-1]+str(run)
     logdir=os.path.join(experiment_path,'logs','')
     os.makedirs(experiment_path+'/models',exist_ok=True)
     os.makedirs(experiment_path+'/logs',exist_ok=True)
@@ -418,9 +422,9 @@ def train_abc3(text_path,batch_size,seq_length,load=False,model_path='',lstm_no=
     )
     # learning rate scheduler
     def schedule(epoch):
-        if epoch < 5:
+        if epoch <= 5:
              new_lr = .003
-        elif epoch >= 5:
+        elif epoch > 5:
              new_lr = 0.003 * 0.97 ** (epoch-4) 
         
         
@@ -452,7 +456,7 @@ def train_abc3(text_path,batch_size,seq_length,load=False,model_path='',lstm_no=
 if __name__=='__main__':
     #get_kern_text('data1','kern_text.txt')
     #removeComments('kern_text.txt', 'kern_text_nocomment.txt')
-    text_path='data_v3_startstop'
+    text_path='data/data_v3_startstop'
     #model_path='experiments/13-08-20/data_v3_startstop_model_n3_s256_d0.2_sl64_bs256/models/model-006-0.9513-1.2259'
     train_abc3(text_path,256,64,lstm_no=1,lstm_size=32,dropout=0.2,epochs=100)
     

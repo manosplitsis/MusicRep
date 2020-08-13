@@ -194,7 +194,7 @@ def glue_notes(notes, add_marks=True):
   all_notes=[]
   for n in notes:
     if add_marks:
-        all_notes=all_notes+[500]+list(n)+[501]    
+        all_notes=all_notes+[350]+list(n)+[351]    
     else:
         all_notes=all_notes+list(n)
   return np.array(all_notes)
