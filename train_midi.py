@@ -294,8 +294,7 @@ def train_with_loader(notes_path,batch_size,seq_length,load=False,all_notes=Fals
   csvlog=tf.keras.callbacks.CSVLogger(experiment_path+'/logs.csv', separator=",", append=False)
   
   tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir = logdir,
-                                                histogram_freq = 1,
-                                                profile_batch = '200,400')
+                                                histogram_freq = 1)
   
   callbacks_list = [checkpoint,csvlog,tensorboard_callback]
   

@@ -17,9 +17,9 @@ from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, Lambd
 from tensorflow.keras.utils import Sequence
 
 
-#from tensorflow.keras.mixed_precision import experimental as mixed_precision
-#policy = mixed_precision.Policy('mixed_float16')
-#mixed_precision.set_policy(policy)
+from tensorflow.keras.mixed_precision import experimental as mixed_precision
+policy = mixed_precision.Policy('mixed_float16')
+mixed_precision.set_policy(policy)
 
 from music21 import *
 import numpy as np
@@ -453,7 +453,6 @@ if __name__=='__main__':
     #get_kern_text('data1','kern_text.txt')
     #removeComments('kern_text.txt', 'kern_text_nocomment.txt')
     text_path='data_v3_startstop'
-    model_path='experiments/13-08-20/data_v3_startstop_model_n3_s256_d0.2_sl64_bs256/models/model-006-0.9513-1.2259'
+    #model_path='experiments/13-08-20/data_v3_startstop_model_n3_s256_d0.2_sl64_bs256/models/model-006-0.9513-1.2259'
     train_abc3(text_path,256,64,lstm_no=1,lstm_size=32,dropout=0.2,epochs=100)
-    
     
