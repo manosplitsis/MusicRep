@@ -103,12 +103,12 @@ def build_model2_emb(batch_size, seq_len, n_vocab,lstm_size=256,lstm_no=1,dropou
     #model.add(Embedding(n_vocab, n_vocab))
     model.add(Embedding(input_dim=n_vocab, output_dim=n_vocab, embeddings_initializer='identity',trainable=False))
     if lstm_no==1:
-        model.add(LSTM(lstm_size,return_sequences=True,input_shape=(None,n_vocab)))
+        model.add(LSTM(lstm_size,return_sequences=True,input_shape=(None,None)))
         #model.add(LSTM(lstm_size,return_sequences=True))
         model.add(Dropout(dropout_rate))
     elif lstm_no>1:
         for i in range(lstm_no-1):
-            model.add(LSTM(lstm_size, return_sequences=True,input_shape=(None,n_vocab)))
+            model.add(LSTM(lstm_size, return_sequences=True,input_shape=(None,None)))
             model.add(Dropout(dropout_rate))
         model.add(LSTM(lstm_size,return_sequences=True))
         model.add(Dropout(dropout_rate))
@@ -117,6 +117,28 @@ def build_model2_emb(batch_size, seq_len, n_vocab,lstm_size=256,lstm_no=1,dropou
     model.add(Activation('softmax', dtype='float32'))
     return model
 
+def build_model3(batch_size, n_vocab,lstm_size=256,lstm_no=1,dropout_rate=0.2):
+    '''
+    Input must not contain 0s. Use dictionary with entries starting from 1.
+    '''
+
+    model = Sequential()
+    #model.add(Embedding(n_vocab, n_vocab))
+    model.add(Embedding(input_dim=n_vocab+1, output_dim=n_vocab+1,mask_zero=True, embeddings_initializer='identity',trainable=False))
+    if lstm_no==1:
+        model.add(LSTM(lstm_size,return_sequences=True,input_shape=(None,None)))
+        #model.add(LSTM(lstm_size,return_sequences=True))
+        model.add(Dropout(dropout_rate))
+    elif lstm_no>1:
+        for i in range(lstm_no-1):
+            model.add(LSTM(lstm_size, return_sequences=True,input_shape=(None,None)))
+            model.add(Dropout(dropout_rate))
+        model.add(LSTM(lstm_size,return_sequences=True))
+        model.add(Dropout(dropout_rate))
+    model.add(TimeDistributed(Dense(n_vocab+1))) 
+    #model.add(Dense(n_vocab))
+    model.add(Activation('softmax', dtype='float32'))
+    return model
 def build_state_model(batch_size, seq_len, n_vocab,lstm_size=256,lstm_no=1,dropout_rate=0.2):
   
     model = Sequential()

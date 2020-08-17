@@ -593,12 +593,12 @@ def get_notes(encoding,data_dir='midi/midi/session/dummy',file_extension='.mid',
         get_notes_event1(path,resolution=resolution,streams=streams)     
 
 
-from multiprocessing import Pool
+
 if __name__=='__main__':
     
     #for enc in ['tstep1','tstep2','event1']:
 
-    notes=get_notes_from('event1',8,'midi/midi/session/dummy/*.mid')
+    notes=get_notes_from('event1',8,'midi/midi/session/*.mid')
         
 '''
 if __name__=='__main__':

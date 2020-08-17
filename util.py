@@ -187,7 +187,7 @@ def add_piece_start_stop(notes):
       n=np.append(np.array([500]),n)
       n=np.append(n,np.array([501]))
       nnotes.append(n)
-    return np.array(nnotes)
+    return np.array(nnotes,dtype=object)
 
 def glue_notes(notes, add_marks=True):
   """ glues together all pieces in a big note array, if add_marks it adds start and stop marks before and after each piece"""
@@ -199,7 +199,7 @@ def glue_notes(notes, add_marks=True):
         all_notes=all_notes+list(n)
   return np.array(all_notes)
 
-def keep_dataset_notes(notes):  
+def keep_dataset_notes(notes,zero_pad=False):  
     """Returns a dictionary of all notes that appear in the dataset"""
     try:
         notes[0][0]==0
@@ -208,7 +208,10 @@ def keep_dataset_notes(notes):
     x=set()
     for piece in notes:
         x=x.union(set(piece))
-    temp=zip(x,range(len(sorted(x))))
+    if zero_pad:
+        temp=zip(x,range(1,len(sorted(x))+1))
+    else:
+        temp=zip(x,range(len(sorted(x))))
     return dict(temp)
 
 def transpose_notes_step(enc,notes,step=1):
