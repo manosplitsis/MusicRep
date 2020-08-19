@@ -273,6 +273,7 @@ def train_with_loader(notes_path,batch_size,seq_length,epochs=50,load=False,all_
     print(ftime)
     notes_name=os.path.basename(notes_path)
     notes=pd.read_pickle(notes_path)
+    notes=notes[:12117]
     notes=add_piece_start_stop(notes)
     
     print('Notes read')
@@ -338,8 +339,8 @@ def train_with_loader(notes_path,batch_size,seq_length,epochs=50,load=False,all_
     
     tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir = logdir,
                                                   histogram_freq = 0)
-    
-    callbacks_list = [checkpoint,csvlog,tensorboard_callback]
+    earlystop=tf.keras.callbacks.EarlyStopping(patience=2)
+    callbacks_list = [checkpoint,csvlog,tensorboard_callback,earlystop]
     
     if load:
         model=load_model(model_path)
@@ -450,7 +451,7 @@ def train_with_loader2(notes_path,batch_size,epochs=50,load=False,all_notes=Fals
                                                   embeddings_freq=0,
                                                   write_images=True)
     
-    earlystop=tf.keras.callbacks.EarlyStopping(patience=2)
+    earlystop=tf.keras.callbacks.EarlyStopping(patience=4)
     callbacks_list = [checkpoint,csvlog,earlystop,tensorboard_callback]
     
     if lr_schedule:
