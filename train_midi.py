@@ -279,9 +279,9 @@ def train_with_loader(notes_path,batch_size,seq_length,epochs=50,load=False,all_
     
     model_info=f'_model_n{lstm_no}_s{lstm_size}_d{dropout}_sl{seq_length}_bs{batch_size}'
     if all_notes:
-        experiment_path=os.path.join('experiments','corpus_seq','MIDI',notes_name+model_info+'run_0')
+        experiment_path=os.path.join('experiments','seq_corpus','MIDI',notes_name+model_info+'run_0')
     else:
-        experiment_path=os.path.join('experiments','song_seq','MIDI',notes_name+model_info+'run_0')
+        experiment_path=os.path.join('experiments','seq_song','MIDI',notes_name+model_info+'run_0')
     run=0
     while os.path.exists(experiment_path):
         run+=1

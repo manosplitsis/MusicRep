@@ -180,8 +180,8 @@ def make_abc_seeds(text_path,no_seeds,seq_length):
     #start_index = random.randint(0, len(text) - seq_length - 1)
     start_index=0
     pieces=text.split('\n\n')
-    pieces_c=pieces[:22925]
-    pieces_csharp=pieces[22925:]
+    pieces_c=pieces[:12117]
+    pieces_csharp=pieces[12117:]
     
     del text
     val_split=0.1
@@ -309,9 +309,9 @@ def process_abc2(sentence,count_abc):
 
   
 if __name__=='__main__':
-    model_path='experiments/seq_song/ABC/data_V3_nohead_model_n1_s32_d0.2_sl100_bs256_C_run_1111115/models/model-022-1.7627-1.6856'
+    model_path='experiments/tesla/folkrnn/data_V3_nohead_model_n1_s32_d0.2_bs256_run_3/models/model-196-1.7177-1.4805'
     text_path='data/data_V3_nohead'
-    no_seeds=10
-    seq_length=10
+    no_seeds=5
+    seq_length=1
     seeds=make_abc_seeds(text_path, no_seeds, seq_length)
     tt=generate_many_abc(model_path, seeds, seq_length)
