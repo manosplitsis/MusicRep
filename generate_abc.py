@@ -91,22 +91,30 @@ def generate_text(model_path,text_path,seed_ind,seq_length,gen_length):
     print(output)
     return(output_ind,output)
 
-def generate_abc_naive(model_path,text_path,seq_length,temp=1.):
+def generate_abc_naive(model_path,text_path,seq_length,temp=1.,no_exports=1):
     
     
     model=load_model(model_path)
-    pattern=[]
     text=load_doc(text_path)
     chars = sorted(list(set(text)))
     #start_index = random.randint(0, len(text) - seq_length - 1)
     start_index=0
     pieces=text.split('\n\n')
+    pieces_c=pieces[:22925]
+    pieces_csharp=pieces[22925:]
+    
     del text
     val_split=0.1
-    pieces_train=pieces[0:len(pieces)-int(val_split*len(pieces))]
-    pieces_validate=pieces[len(pieces)-int(val_split*len(pieces)):len(pieces)]
+    
+    
+    pieces_train_c=pieces_c[0:len(pieces_c)-int(val_split*len(pieces_c))]
+    pieces_validate_c=pieces_c[len(pieces_c)-int(val_split*len(pieces_c)):len(pieces_c)]
+    pieces_train_csharp=pieces_csharp[0:len(pieces_csharp)-int(val_split*len(pieces_csharp))]
+    pieces_validate_csharp=pieces_csharp[len(pieces_csharp)-int(val_split*len(pieces_csharp)):len(pieces_csharp)]
+    pieces_train=pieces_train_c+pieces_train_csharp
+    pieces_validate=pieces_validate_c+pieces_validate_csharp
     del pieces
-    sentence = pieces_validate[0].split()[start_index: start_index + seq_length-1]
+    sentence = pieces_validate_c[0].split()[start_index: start_index + seq_length]
     generated=[]
     
     #generated=np.array(generated)
@@ -122,31 +130,182 @@ def generate_abc_naive(model_path,text_path,seq_length,temp=1.):
     #generated = sentence
     print('----- Generating with seed: "' + ''.join(sentence)+ '"')
     #sys.stdout.write(generated)
+    if generate_pieces:
+        for i in no_exports:
+            abc=''
+            stop=False
+            count=0
+            count_abc
+            while stop==False and count<output_length:
+                x_pred=np.array(generated)
+        
+                preds = model.predict(x_pred, verbose=0)[-1][0]
+                #preds = model(x_pred, training = False)[-1][0]
+                next_index = sample(preds, temp)
+                next_char = indices_char[next_index]
+                if next_char=='</s>':
+                    stop=True
+                    if len(abc)==0:
+                        abc=process_abc(sentence,count_abc)
+                    else:
+                        abc+='\n\n'+process_abc(sentence,count_abc)
+                generated.append(next_index)
+                generated=generated[1:]
+                sentence.append(next_char)
+                sentence = sentence[1:]
+        
+                sys.stdout.write(next_char)
+                sys.stdout.flush()
+    else:
+        for i in range(output_length):
+            x_pred=np.array(generated)
     
-    for i in range(400):
-        #x_pred = np.zeros((1, seq_length, n_vocab))
-        #for t, char in enumerate(sentence):
-        #    x_pred[0, t, char_indices[char]] = 1.
-        x_pred=np.array(generated)
-
-        preds = model.predict(x_pred, verbose=0)[-1][0]
-        next_index = sample(preds, temp)
-        next_char = indices_char[next_index]
-        generated.append(next_index)
-        generated=generated[1:]
-        sentence.append(next_char)
-        sentence = sentence[1:]
-
-        sys.stdout.write(next_char)
-        sys.stdout.flush()
+            preds = model.predict(x_pred, verbose=0)[-1][0]
+            #preds = model(x_pred, training = False)[-1][0]
+            next_index = sample(preds, temp)
+            next_char = indices_char[next_index]
+            generated.append(next_index)
+            generated=generated[1:]
+            sentence.append(next_char)
+            sentence = sentence[1:]
     
-    return(sentence)
+            sys.stdout.write(next_char)
+            sys.stdout.flush()
+    
+    return(abc)
 
+def make_abc_seeds(text_path,no_seeds,seq_length):
+    text=load_doc(text_path)
+    chars = sorted(list(set(text)))
+    #start_index = random.randint(0, len(text) - seq_length - 1)
+    start_index=0
+    pieces=text.split('\n\n')
+    pieces_c=pieces[:22925]
+    pieces_csharp=pieces[22925:]
+    
+    del text
+    val_split=0.1
+    
+    
+    pieces_train_c=pieces_c[0:len(pieces_c)-int(val_split*len(pieces_c))]
+    pieces_validate_c=pieces_c[len(pieces_c)-int(val_split*len(pieces_c)):len(pieces_c)]
+    pieces_train_csharp=pieces_csharp[0:len(pieces_csharp)-int(val_split*len(pieces_csharp))]
+    pieces_validate_csharp=pieces_csharp[len(pieces_csharp)-int(val_split*len(pieces_csharp)):len(pieces_csharp)]
+    pieces_train=pieces_train_c+pieces_train_csharp
+    pieces_validate=pieces_validate_c+pieces_validate_csharp
+    del pieces
+    inds=np.random.randint(0,len(pieces_validate_c),size=no_seeds)
+    seeds=[]
+    for i in inds:
+        seeds.append(pieces_validate_c[i].split()[start_index: start_index + seq_length])
+    return seeds
+
+def generate_many_abc(model_path,seeds,seq_length,temp=1.,no_exports=1,generate_pieces=True,output_length=500):
+    
+    
+    model=load_model(model_path)
+    experiment_path=os.path.dirname(os.path.dirname(model_path))
+    
+    dictionary=np.load(experiment_path+'/dictionary',allow_pickle=True)
+    n_vocab=len(dictionary)
+    char_indices=dictionary
+    indices_char= {value:key for (key,value) in dictionary.items()}
+    sentences=[]
+    for seed in seeds:
+        sentence=[]
+        for i in seed:
+            sentence.append(dictionary[i])
+        sentences.append(np.array(sentence))
+    #sentences=np.array(sentences,dtype='obj')
+    #generated=[]
+    #generated = sentence
+    #print('----- Generating with seed: "' + ''.join(sentence)+ '"')
+    #sys.stdout.write(generated)
+    abc=''
+    if generate_pieces:
+        
+        stop=False
+        count=0
+        count_abc=0
+        delete_sentence=-1
+        print('producing '+str(len(sentences))+' tunes')
+        while len(sentences)>0 and count<output_length:
+            
+            if delete_sentence>=0:
+                print('deleting sentence ',delete_sentence, 'with length ',len(sentences[delete_sentence]))
+                sentences.pop(delete_sentence)
+                delete_sentence=-1
+                if len(sentences)==0:
+                    break
+            x_pred=np.array(sentences,dtype='int16')
+            preds_batches = model.predict(x_pred, verbose=0)
+            for i,preds in enumerate(preds_batches):
+                #preds = model(x_pred, training = False)[-1][0]
+                next_index = sample(preds[-1], temp)
+                next_char = indices_char[next_index]
+                
+                if next_char=='</s>':
+                    print('to be deleted:',i)
+                    stop=True
+                    
+                    piece=[indices_char[ind] for ind in sentences[i] ]
+                    if len(abc)==0:
+                        abc=process_abc(piece,count_abc)
+                        print(abc)
+                    else:
+                        abc+='\n\n'+process_abc(piece,count_abc)
+                        print(abc)
+                    count_abc+=1
+                    delete_sentence=i
+                    print('tunes made:',count_abc)
+                    #sentences=np.delete(sentences,i,axis=0) #remove from seeds
+                    #sentences.pop(i)
+                    continue
+                if len(sentences)>0:
+                    sentences[i]=np.append(sentences[i],next_index)
+        if count<output_length:
+            for i in sentences:
+                piece=[indices_char[ind] for ind in sentences[i] ]
+                abc+='\n\n'+process_abc(piece,count_abc)
+                count_abc+=1
+                sentences=np.delete(sentences,i,axis=0)
+    else:
+        for i in range(output_length):
+            x_pred=np.array(generated)
+    
+            preds = model.predict(x_pred, verbose=0)[-1][0]
+            #preds = model(x_pred, training = False)[-1][0]
+            next_index = sample(preds, temp)
+            next_char = indices_char[next_index]
+            generated.append(next_index)
+            generated=generated[1:]
+            sentence.append(next_char)
+            sentence = sentence[1:]
+    
+            sys.stdout.write(next_char)
+            sys.stdout.flush()
+    
+    return(abc)
+
+def process_abc(sentence,count_abc):
+    abc='X:'+str(count_abc)+'\nM:4/4\nK:Cmaj\n'
+    for i in sentence[1:]:
+        abc+=i
+    return abc
+
+def process_abc2(sentence,count_abc):
+    abc='X:'+count_abc+'\n'
+    abc+=sentence[1]+'\n'+sentence[2]+'\n'
+    for i in sentence[3:]:
+        abc+=i
+    return abc
 #%%
 
   
 if __name__=='__main__':
-    model_path='experiments/folkrnn/ABC/data_v3_startstop_model_n2_s128_d0.5_bs64run_0/models/model-028-1.5035-1.3512'
-    text_path='data/data_v3_startstop'
-    tt=generate_abc_naive(model_path,text_path,2,temp=0.01)
-
+    model_path='experiments/seq_song/ABC/data_V3_nohead_model_n1_s32_d0.2_sl100_bs256_C_run_1111115/models/model-022-1.7627-1.6856'
+    text_path='data/data_V3_nohead'
+    no_seeds=5
+    seq_length=10
+    seeds=make_abc_seeds(text_path, no_seeds, seq_length)
+    tt=generate_many_abc(model_path, seeds, seq_length)

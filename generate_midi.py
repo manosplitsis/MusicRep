@@ -214,60 +214,80 @@ def create_midi4(prediction_output,resolution=8,save_path='',name='test_output',
         return midi_stream
     else:
         midi_stream.write('midi', fp=save_path+'/'+name+'.mid')
-
-def generate(encoding,resolution,seed,seed_name,model_path='', keep_seed=False,temperature=1,output_length=200):
+import sim_functions
+def generate(encoding,resolution,seed,seed_name,model_path='',generate_pieces=True, keep_seed=False,temperature=1,output_length=200):
     """ Generate a piano midi file """
-    
-
-    #loader= Data_Gen_Midi(batch_folder='npz/validate')
-    #network_input = loader.__getitem__(0)[0][0]
-    #seed=notes[0][0:64]
     
     experiment_path=os.path.dirname(os.path.dirname(model_path))
     output_path=experiment_path+'/output'
+    if generate_pieces:
+        output_path+='/pieces'
     filename=os.path.basename(model_path)
-    filename=filename[6:23]+f'-temp_{temperature}'
-    #resolution=int(experiment_path[-1])
+    filename=filename[6:23]+f'-temp_{temperature}_sl_{len(seed)}'
     dictionary=np.load(experiment_path+'/dictionary',allow_pickle=True)
     seed_dict=[]
     for i in seed:
         seed_dict.append(dictionary[i])
-          
-      #hot_input=midi_to_onehot_dict(seed,dictionary)
-    
-      #hot_input=midi_to_onehot(seed)
+    network_input=np.array(seed_dict)
 
-
+    #load the model
     model=load_model(model_path)
-    prediction_output = generate_notes_hot(model, seed_dict,temperature=temperature,output_length=output_length)
-    
-  
-    dict_output=[]
+    model.layers[0].trainable=False
+    model.summary()
+    #prediction_output = generate_notes_hot(model, seed_dict,temperature=temperature,output_length=output_length)
     rev_dict={value:key for (key,value) in dictionary.items()}
+
+    #make the predictions
+    prediction_output = []
+    if generate_pieces:
+        stop=False
+        count=0
+        while stop==False and count<output_length:
+            prediction_input = np.reshape(network_input, (1, network_input.shape[0]))
+            prediction = model(prediction_input, training=False)[0][-1]
+            #index=sample(prediction,temperature=temperature)
+            
+            if rev_dict[index]==501:
+                stop=True
+            prediction_output.append(index)
+            network_input=np.append(network_input,index)
+            count+=1
+    else:
+        for note_index in range(output_length):
+            prediction_input = np.reshape(network_input, (1, network_input.shape[0]))          
+            prediction = model(prediction_input, training=False)[0][-1]
+            index=sample(prediction,temperature=temperature)
+            prediction_output.append(index)
+            network_input=np.append(network_input,index)
+    
+    #convert the dictionary outputs back to the original
+    dict_output=[]
     for i in prediction_output:
       dict_output.append(rev_dict[i])
+   
     if keep_seed:
       dict_output=np.append(seed,dict_output)
       filename+='+seed'
 
-    
-    
     #return prediction_output
-    os.makedirs(f'{output_path}',exist_ok=True)
+    os.makedirs(output_path,exist_ok=True)
     create_midi(encoding,resolution,dict_output,save_path=output_path+'/'+seed_name,name=filename)
     return (dict_output)
 
     
-def seed_to_midi(encoding,resolution,seed,seed_name,model_path=''):
+def seed_to_midi(encoding,resolution,seed,seed_name,model_path='',generate_pieces=False):
     """ Generate a piano midi file """
     
 
     #loader= Data_Gen_Midi(batch_folder='npz/validate')
     #network_input = loader.__getitem__(0)[0][0]
     #seed=notes[0][0:64]
-    
     experiment_path=os.path.dirname(os.path.dirname(model_path))
-    output_path=experiment_path+'/output'+'/'+seed_name
+    output_path=experiment_path+'/output'
+    if generate_pieces:
+        output_path+='/pieces'
+    #experiment_path=os.path.dirname(os.path.dirname(model_path))
+    output_path+='/'+seed_name
     filename='seed_'+seed_name
     #resolution=int(experiment_path[-1])
    
@@ -306,7 +326,7 @@ if __name__=='__main__':
     get_stats_dataset(notes_path,encoding,resolution,no_pieces,piece_length,output_path='stats')
 '''
 if __name__=='__main__':
-    model_path='experiments/15-08-20/notes_event1_res8_model_n3_s256_d0.5_bs64run_0/models/model-008-0.3972-1.1042'
+    model_path='experiments/folkrnn/MIDI/notes_event1_res8_model_n2_s64_d0.5_bs256run_0/models/model-116-0.9735-0.8094'
     notes_path='notes/notes_event1_res8'
     encoding=4
     #resolution=int(notes_path[-1])
@@ -315,27 +335,29 @@ if __name__=='__main__':
     #notes=notes[0:int(len(notes)/4)]
     notes=add_piece_start_stop(notes)
     notes=list(notes)
-    notes.sort(key=lambda x: len(x), reverse=True)
+    #notes.sort(key=lambda x: len(x), reverse=True)
     val_split=0.1
     notes_validate=notes[len(notes)-int(val_split*len(notes)):len(notes)]
     
-    temperatures=[0.01,0.1,0.2]
+    temperatures=[0.1,0.3,0.5]
     
-    seed_ind=[10,11,13]
+    #seed_ind=[10,11,13]
+    seed_ind=[4,5,6]
     #seed_ind=range(5)
-    seq_length=5
+    seq_length=32
     for i,seed in enumerate ([notes_validate[i][0:seq_length] for i in seed_ind]):
         if len(seed)<seq_length:
             seed_ind.append(seed_ind[-1]+1)
             continue
         #seed=seed_list[i]
         seed_name='seed'+str(seed_ind[i])  
-        seed_to_midi(encoding,resolution,seed,seed_name,model_path=model_path)
+        print('Generating with seed: ',seed)
+        seed_to_midi(encoding,resolution,seed,seed_name,model_path=model_path,generate_pieces=True)
         for t in temperatures:
           if t==0.01:
-            generate(encoding,resolution,seed,seed_name,model_path,keep_seed=True, temperature=t)
+            generate(encoding,resolution,seed,seed_name,model_path,keep_seed=True, temperature=t,generate_pieces=True)
             continue
-          generate(encoding,resolution,seed,seed_name,model_path,keep_seed=True, temperature=t)
+          generate(encoding,resolution,seed,seed_name,model_path,keep_seed=True, temperature=t,generate_pieces=True)
 '''
 if __name__=='__main__':
     model_path='model-016-0.8498-0.8190'

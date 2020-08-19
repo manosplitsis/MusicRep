@@ -89,7 +89,7 @@ def build_model2(batch_size, seq_len, n_vocab,lstm_size=256,lstm_no=1,dropout_ra
     model.add(Activation('softmax', dtype='float32'))
     return model
 
-def build_model2_emb(batch_size, seq_len, n_vocab,lstm_size=256,lstm_no=1,dropout_rate=0.2):
+def build_model2_emb(batch_size, n_vocab,lstm_size=256,lstm_no=1,dropout_rate=0.2):
     '''
     Build the model--> Embedding the every character as neuron Dense Layer
                       --> 3 Layer of LSTM each of 256 units(cell) in it.

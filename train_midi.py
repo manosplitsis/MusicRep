@@ -120,21 +120,25 @@ def samples_to_batches2(samples,batch_size):
 class Data_Gen_Midi(Sequence):
     
     def __init__(self,notes, batch_size=64,seq_length=64, to_fit=True,shuffle=True, one_hot=True,dict=True,n_vocab=130):
-    
+        self.dictionary=keep_dataset_notes(notes)
         self.samples=get_fsamples(notes,seq_length=seq_length)
+        del notes
+        self.sample_ids=np.arange(len(self.samples))
         self.batch_size = batch_size
         self.seq_length=seq_length
         self.shuffle=shuffle
         self.to_fit=to_fit
         self.one_hot=one_hot
         self.dict=dict
-        self.dictionary=keep_dataset_notes(notes)
+        
         self.n_vocab=n_vocab
     def __len__(self):
         return int(len(self.samples)/self.batch_size)
     
     def __getitem__(self, idx):
-        batch=self.samples[self.batch_size*idx:self.batch_size*(idx+1)]
+        batch_ids=self.sample_ids[self.batch_size*idx:self.batch_size*(idx+1)]
+        batch=self.samples[batch_ids]
+        #batch=self.samples[self.batch_size*idx:self.batch_size*(idx+1)]
         batch_x_midi =np.array([batch[i][0:self.seq_length] for i in range(self.batch_size)])
         batch_y_midi =np.array([batch[i][self.seq_length] for i in range(self.batch_size)])
         if self.one_hot:
@@ -157,15 +161,16 @@ class Data_Gen_Midi(Sequence):
     
     def on_epoch_end(self):
       if self.shuffle == True:
-            np.random.shuffle(self.samples)
+          np.random.shuffle(self.sample_ids)
+          #np.random.shuffle(self.samples)
   
 class Data_Gen_Midi2(Sequence):
 
     def __init__(self,notes, dictionary,batch_size=64,seq_length=64,to_fit=True,shuffle=True, one_hot=False,glue_notes=False):
-        if glue_notes:
-            self.samples=get_fsamples(notes,seq_length=seq_length)
-        else:
-            self.samples=get_fsamples(notes,seq_length=seq_length)
+        
+        self.samples=get_fsamples(notes,seq_length=seq_length)
+        del notes
+        self.sample_ids=np.arange(len(self.samples))
         self.batch_size = batch_size
         self.seq_length=seq_length
         self.shuffle=shuffle
@@ -178,7 +183,9 @@ class Data_Gen_Midi2(Sequence):
         return int(len(self.samples)/self.batch_size)
 
     def __getitem__(self, idx):
-        batch=self.samples[self.batch_size*idx:self.batch_size*(idx+1)]
+        batch_ids=self.sample_ids[self.batch_size*idx:self.batch_size*(idx+1)]
+        batch=self.samples[batch_ids]
+        #batch=self.samples[self.batch_size*idx:self.batch_size*(idx+1)]
         batch_x_midi =np.array([batch[i][0:self.seq_length] for i in range(self.batch_size)])
         batch_y_midi =np.array([batch[i][1:] for i in range(self.batch_size)])
         if self.one_hot:
@@ -205,14 +212,18 @@ class Data_Gen_Midi2(Sequence):
 
     def on_epoch_end(self):
         if self.shuffle == True:
-              np.random.shuffle(self.samples)
+            np.random.shuffle(self.sample_ids)
+            #np.random.shuffle(self.samples)
   
 class Data_Gen_Midi3(Sequence):
 
     def __init__(self,notes,dictionary, batch_size=64,shuffle=False):
-        self.notes=notes        
+        self.notes=notes
+        self.note_ids=np.arange(len(notes))        
         if not shuffle:
             self.notes.sort(key=lambda x: len(x), reverse=True)
+        else:
+            np.random.shuffle(self.note_ids)
         self.no_batches=int(len(notes)/batch_size)
         #self.batches=[notes[i:i+batch_size] for i in range(self.no_batches)]
         self.shuffle=shuffle
@@ -223,7 +234,9 @@ class Data_Gen_Midi3(Sequence):
         return self.no_batches
 
     def __getitem__(self, idx):
-        batch=self.notes[self.batch_size*idx:self.batch_size*(idx+1)]
+        batch_ids=self.note_ids[self.batch_size*idx:self.batch_size*(idx+1)]
+        batch=self.notes[batch_ids]
+        #batch=self.notes[self.batch_size*idx:self.batch_size*(idx+1)]
         batch_x_midi =np.array([batch[i][:-1] for i in range(self.batch_size)])
         batch_y_midi =np.array([batch[i][1:] for i in range(self.batch_size)])
         batch_x_midi=[[self.dictionary[i] for i in piece]for piece in batch_x_midi]
@@ -235,7 +248,7 @@ class Data_Gen_Midi3(Sequence):
 
     def on_epoch_end(self):
         if self.shuffle == True:
-              np.random.shuffle(self.notes)
+              np.random.shuffle(self.note_ids)
 
 
 def schedule2(epoch):
@@ -260,9 +273,8 @@ def train_with_loader(notes_path,batch_size,seq_length,epochs=50,load=False,all_
     print(ftime)
     notes_name=os.path.basename(notes_path)
     notes=pd.read_pickle(notes_path)
-    #notes=notes[0:500]
-    #notes=list(notes)
-    #notes.sort(key=lambda x: len(x), reverse=True)
+    notes=add_piece_start_stop(notes)
+    
     print('Notes read')
     
     model_info=f'_model_n{lstm_no}_s{lstm_size}_d{dropout}_sl{seq_length}_bs{batch_size}'
@@ -278,6 +290,7 @@ def train_with_loader(notes_path,batch_size,seq_length,epochs=50,load=False,all_
     os.makedirs(experiment_path+'/models',exist_ok=True)
     os.makedirs(experiment_path+'/logs',exist_ok=True)
     
+
     dictionary=keep_dataset_notes(notes,zero_pad=False)
     n_vocab=len(dictionary)
     with open(experiment_path+'/dictionary', 'wb') as filepath:
@@ -292,7 +305,6 @@ def train_with_loader(notes_path,batch_size,seq_length,epochs=50,load=False,all_
         notes_validate=glue_notes(notes_validate,add_marks=True)
         print('Notes glued')
     else:
-        notes=add_piece_start_stop(notes)
         notes_train=notes[0:len(notes)-int(val_split*len(notes))]
         notes_validate=notes[len(notes)-int(val_split*len(notes)):len(notes)]
         del notes
@@ -306,7 +318,7 @@ def train_with_loader(notes_path,batch_size,seq_length,epochs=50,load=False,all_
 
     
 
-    model.summary()
+    
     filepath = os.path.abspath(experiment_path+'/models/model-{epoch:03d}-{loss:.4f}-{val_loss:.4f}')
     checkpoint = ModelCheckpoint(
         filepath,
@@ -333,10 +345,10 @@ def train_with_loader(notes_path,batch_size,seq_length,epochs=50,load=False,all_
         model=load_model(model_path)
     else:
         #model=create_simple_network_func(input_shape,n_vocab=n_vocab,lstm_size=lstm_size)
-        model=build_model2_emb(batch_size,seq_length, n_vocab, lstm_no=lstm_no,lstm_size=lstm_size,dropout_rate=dropout)
+        model=build_model2_emb(batch_size, n_vocab, lstm_no=lstm_no,lstm_size=lstm_size,dropout_rate=dropout)
         optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate)
         model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer,metrics=['accuracy'])
-      
+        model.summary()
     model.fit(train_loader,validation_data=val_loader,initial_epoch=0, epochs=epochs, callbacks=callbacks_list,verbose=1)
     
 def train_with_loader2(notes_path,batch_size,epochs=50,load=False,all_notes=False,model_path='',lstm_size=32,lstm_no=1,dropout=0.2,learning_rate=0.0001,lr_schedule=False,shuffle=False):
@@ -351,13 +363,13 @@ def train_with_loader2(notes_path,batch_size,epochs=50,load=False,all_notes=Fals
     #os.mkdir('/experiments/{fday}')
     #os.mkdir('/experiments/{fday}/{ftime} - {desc}')
     notes_name=os.path.basename(notes_path)
-    notes=pd.read_pickle(notes_path)
+    pieces=pd.read_pickle(notes_path)
     #notes=notes[0:19200]
-    notes=add_piece_start_stop(notes)
-    notes=list(notes)
+    pieces=add_piece_start_stop(pieces)
+    pieces=list(pieces)
     #notes.sort(key=lambda x: len(x), reverse=True)
     #notes=notes[batch_size*2:] #delete the first two (biggest) batches to save memory in gpu
-    dictionary=keep_dataset_notes(notes,zero_pad=True)
+    dictionary=keep_dataset_notes(pieces,zero_pad=True)
     
     n_vocab=len(dictionary)
     print('Notes read')
@@ -376,27 +388,40 @@ def train_with_loader2(notes_path,batch_size,epochs=50,load=False,all_notes=Fals
     os.makedirs(experiment_path+'/models',exist_ok=True)
     os.makedirs(experiment_path+'/logs',exist_ok=True)
     
-    val_split=0.1
     
     with open(experiment_path+'/dictionary', 'wb') as filepath:
       pickle.dump(dictionary, filepath)
     
-    notes_train=notes[0:len(notes)-int(val_split*len(notes))]
-    notes_validate=notes[len(notes)-int(val_split*len(notes)):len(notes)]
-    del notes
     
-    train_loader=Data_Gen_Midi3(notes_train,dictionary,batch_size=batch_size,shuffle=shuffle)
-    val_loader=Data_Gen_Midi3(notes_validate,dictionary,batch_size=batch_size,shuffle=shuffle)
-    del notes_train
-    del notes_validate
+    pieces_c=pieces[:22925]
+    pieces_csharp=pieces[22925:]
+    del pieces
+    
+    val_split=0.1
+    pieces_train_c=pieces_c[0:len(pieces_c)-int(val_split*len(pieces_c))]
+    pieces_validate_c=pieces_c[len(pieces_c)-int(val_split*len(pieces_c)):len(pieces_c)]
+    pieces_train_csharp=pieces_csharp[0:len(pieces_csharp)-int(val_split*len(pieces_csharp))]
+    pieces_validate_csharp=pieces_csharp[len(pieces_csharp)-int(val_split*len(pieces_csharp)):len(pieces_csharp)]
+    pieces_train=pieces_train_c+pieces_train_csharp
+    pieces_validate=pieces_validate_c+pieces_validate_csharp
+    del pieces_c,pieces_csharp
+    
+    #notes_train=notes[0:len(notes)-int(val_split*len(notes))]
+    #notes_validate=notes[len(notes)-int(val_split*len(notes)):len(notes)]
+    #del notes
+    
+    train_loader=Data_Gen_Midi3(pieces_train,dictionary,batch_size=batch_size,shuffle=shuffle)
+    val_loader=Data_Gen_Midi3(pieces_validate,dictionary,batch_size=batch_size,shuffle=shuffle)
+    #del notes_train
+    #del notes_validate
 
     if load:
       model=load_model(model_path)
       model.layers[0].trainable=False
     else:
       model=build_model3(batch_size,n_vocab, lstm_no=lstm_no,lstm_size=lstm_size,dropout_rate=dropout)
-      #optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate,clipnorm=2)
-      optimizer=tf.keras.optimizers.RMSprop(learning_rate=learning_rate,clipnorm=5)
+      optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate)
+      #optimizer=tf.keras.optimizers.RMSprop(learning_rate=learning_rate,clipnorm=5)
       
       model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer,metrics=['accuracy'])
 
@@ -440,17 +465,28 @@ def train_with_loader2(notes_path,batch_size,epochs=50,load=False,all_notes=Fals
     
 
 #%%
-
+'''
 if __name__=='__main__':
-    notes_path='notes/notes_event1_res8'
+    notes_path='notes/notes_tstep1_res8'
     model_path='experiments/15-08-20/notes_event1_res8_model_n1_s32_d0.2_sl64_bs64run_4/models/model-020-2.3585-2.6278'
     for batch_size in [128,64,32]:
-        for lstm_no in [3,2]:
-            for lstm_size in [256,128]
+        for lstm_no in [2,3]:
+            for lstm_size in [64]:
                 try:
-                    train_with_loader2(notes_path, batch_size,epochs=200,lstm_no=lstm_no,lstm_size=lstm_size,dropout=0.5,all_notes=False,lr_schedule=False,shuffle=True)
+                    train_with_loader2(notes_path, batch_size,epochs=200,lstm_no=lstm_no,lstm_size=lstm_size,dropout=0.5,all_notes=False,lr_schedule=False,shuffle=False)
                 except:
                     continue
     
     #train_with_loader(notes_path, batch_size,seq_length=seq_length,lstm_no=1,lstm_size=32,dropout=0.2,all_notes=False)
     #train_with_loader(notes_path, batch_size,seq_length=seq_length,lstm_no=2,lstm_size=256,dropout=0.5,all_notes=False)
+    
+'''
+if __name__=='__main__':
+    notes_path='notes/notes_event1_res8_44'
+    train_with_loader(notes_path, 256, 64,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2)
+    notes_path='notes/notes_tstep1_res8'
+    train_with_loader(notes_path, 256, 64,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2)
+    notes_path='notes/notes_tstep1_res8'
+    train_with_loader(notes_path, 256, 64,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,all_notes=True)
+    notes_path='notes/notes_tstep2_res8'
+    train_with_loader(notes_path, 256, 64,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,all_notes=True)

@@ -4,7 +4,18 @@ Created on Sat Aug  8 19:37:27 2020
 
 @author: incog
 """
+import pandas as pd
 from util import load_doc
+notes_path='notes/notes_event1_res8'
+notes_event=pd.read_pickle(notes_path)
+notes_path='notes/notes_tstep1_res8'
+notes_tstep=pd.read_pickle(notes_path)
+text_path='data/data_v3_startstop'
+text=load_doc(text_path)
+pieces=text.split('\n\n')
+
+
+
 def abc_addCounters(text,save_path):
     newtxt=''
     count=1
@@ -14,7 +25,7 @@ def abc_addCounters(text,save_path):
         if len(line)==0:
             newtxt+='X:'+str(count)+'\n'
             count+=1
-    with open(save_path) as infile:
+    with open(save_path,'w') as infile:
         infile.write(newtxt)
     return newtxt
 
@@ -76,6 +87,18 @@ def count_timeSigs(text):
       print('Time Signature {} occurs {} times'.format(k,v))
     return count
 
+def count_timeSigs(text):
+    count = {}
+    for line in text.splitlines():
+        if line.startswith('M:'):
+            if line in count:
+                count[line]+=1
+            else:
+                count[line]=1
+    for k, v in count.items():
+      print('Time Signature {} occurs {} times'.format(k,v))
+    return count
+
 def count_keys(text):
     count = {}
     for line in text.splitlines():
@@ -92,12 +115,17 @@ def keep_only_with(text,string):
     pieces=text.split('\n\n')
     del text
     keepers=[]
-    for piece in pieces:
+    indices=[]
+    for i,piece in enumerate(pieces):
         for line in piece.splitlines():
             if line.startswith(string):
                 keepers.append(piece)
+                indices.append(i)
                 continue
-    return keepers
+    newtxt=keepers[0]
+    for i in keepers[1:]:
+        newtxt+='\n\n'+i
+    return newtxt,indices
 
 def glue_pieces(pieces):
     text=''
@@ -143,4 +171,14 @@ def correct_hornpipe(text):
                 newline+=' '+ch+' '
         newtext+=newline[1:]+'\n'
     return newtext
+
+def remove_lines(text,line_start):
+    newtxt=''
+    for line in text.splitlines():
+        if line.startswith(line_start):
+            continue
+        else:
+            newtxt+='\n'+line
+    return newtxt
+
             
