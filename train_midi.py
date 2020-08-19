@@ -483,10 +483,10 @@ if __name__=='__main__':
 '''
 if __name__=='__main__':
     notes_path='notes/notes_event1_res8_44'
-    train_with_loader(notes_path, 256, 64,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2)
-    notes_path='notes/notes_tstep1_res8'
-    train_with_loader(notes_path, 256, 64,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2)
-    notes_path='notes/notes_tstep1_res8'
-    train_with_loader(notes_path, 256, 64,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,all_notes=True)
-    notes_path='notes/notes_tstep2_res8'
-    train_with_loader(notes_path, 256, 64,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,all_notes=True)
+    train_with_loader(notes_path, 256, 100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2)
+    notes_path='notes/notes_tstep1_res8_44'
+    train_with_loader(notes_path, 256, 100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2)
+    notes_path='notes/notes_tstep1_res8_44'
+    train_with_loader(notes_path, 256, 100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,all_notes=True)
+    notes_path='notes/notes_event1_res8_44'
+    train_with_loader(notes_path, 256, 100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,all_notes=True)
