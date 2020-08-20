@@ -135,7 +135,7 @@ def generate_abc_naive(model_path,text_path,seed_ind,seq_length,generate_pieces=
             abc=''
             stop=False
             count=0
-            count_abc
+            count_abc=0
             while stop==False and count<output_length:
                 x_pred=np.array(generated)
         
