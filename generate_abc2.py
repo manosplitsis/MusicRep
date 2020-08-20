@@ -309,9 +309,9 @@ def process_abc2(sentence,count_abc):
 
   
 if __name__=='__main__':
-    model_path='experiments/tesla/folkrnn/data_V3_nohead_model_n1_s32_d0.2_bs256_run_3/models/model-196-1.7177-1.4805'
+    model_path='experiments/seq_song/ABC/data_V3_nohead_model_n1_s32_d0.2_sl100_bs256_C_run_0/models/model-164-1.7136-1.6604'
     text_path='data/data_V3_nohead'
     no_seeds=5
-    seq_length=1
+    seq_length=10
     seeds=make_abc_seeds(text_path, no_seeds, seq_length)
     tt=generate_many_abc(model_path, seeds, seq_length)

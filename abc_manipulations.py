@@ -10,7 +10,7 @@ notes_path='notes/notes_event1_res8'
 notes_event=pd.read_pickle(notes_path)
 notes_path='notes/notes_tstep1_res8'
 notes_tstep=pd.read_pickle(notes_path)
-text_path='data/data_v3_startstop'
+text_path='data/text_c_44'
 text=load_doc(text_path)
 pieces=text.split('\n\n')
 

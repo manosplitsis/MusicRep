@@ -233,7 +233,7 @@ def generate(encoding,resolution,seed,seed_name,model_path='',generate_pieces=Tr
     #load the model
     model=load_model(model_path)
     model.layers[0].trainable=False
-    model.summary()
+    #model.summary()
     #prediction_output = generate_notes_hot(model, seed_dict,temperature=temperature,output_length=output_length)
     rev_dict={value:key for (key,value) in dictionary.items()}
 
@@ -245,7 +245,7 @@ def generate(encoding,resolution,seed,seed_name,model_path='',generate_pieces=Tr
         while stop==False and count<output_length:
             prediction_input = np.reshape(network_input, (1, network_input.shape[0]))
             prediction = model(prediction_input, training=False)[0][-1]
-            #index=sample(prediction,temperature=temperature)
+            index=sample(prediction,temperature=temperature)
             
             if rev_dict[index]==501:
                 stop=True
@@ -326,7 +326,7 @@ if __name__=='__main__':
     get_stats_dataset(notes_path,encoding,resolution,no_pieces,piece_length,output_path='stats')
 '''
 if __name__=='__main__':
-    model_path='experiments/folkrnn/MIDI/notes_event1_res8_model_n2_s64_d0.5_bs256run_0/models/model-116-0.9735-0.8094'
+    model_path='notes_event1_res8_44_model_n1_s32_d0.2_sl100_bs256run_1/models/model-108-0.8316-0.8228'
     notes_path='notes/notes_event1_res8'
     encoding=4
     #resolution=int(notes_path[-1])
@@ -335,6 +335,7 @@ if __name__=='__main__':
     #notes=notes[0:int(len(notes)/4)]
     notes=add_piece_start_stop(notes)
     notes=list(notes)
+    notes=notes[0:12117]
     #notes.sort(key=lambda x: len(x), reverse=True)
     val_split=0.1
     notes_validate=notes[len(notes)-int(val_split*len(notes)):len(notes)]
@@ -342,8 +343,8 @@ if __name__=='__main__':
     temperatures=[0.1,0.3,0.5]
     
     #seed_ind=[10,11,13]
-    seed_ind=[4,5,6]
-    #seed_ind=range(5)
+    #seed_ind=[4,5,6]
+    seed_ind=range(500)
     seq_length=32
     for i,seed in enumerate ([notes_validate[i][0:seq_length] for i in seed_ind]):
         if len(seed)<seq_length:

@@ -329,12 +329,12 @@ def train_abc_pieces1(text_path,batch_size,seq_length,load=False,model_path='',l
     #text=text.split()
     pieces=text.split('\n\n')
     del text
-    
+    #pieces=pieces[:12117]
     for i,piece in enumerate(pieces):
         pieces[i]=piece.split()
     if not keepC:
-        #pieces_c=pieces[:22925]
-        #pieces_csharp=pieces[22925:]
+        pieces_c=pieces[:12117]
+        pieces_csharp=pieces[12117:]
         val_split=0.1
         pieces_train_c=pieces_c[0:len(pieces_c)-int(val_split*len(pieces_c))]
         pieces_validate_c=pieces_c[len(pieces_c)-int(val_split*len(pieces_c)):len(pieces_c)]
@@ -344,7 +344,7 @@ def train_abc_pieces1(text_path,batch_size,seq_length,load=False,model_path='',l
         pieces_validate=pieces_validate_c+pieces_validate_csharp
         del pieces_c,pieces_csharp,pieces_train_c, pieces_train_csharp
     else:
-        #pieces=pieces[:22925]
+        pieces=pieces[:12117]
         val_split=0.1
         pieces_train=pieces[0:len(pieces)-int(val_split*len(pieces))]
         pieces_validate=pieces[len(pieces)-int(val_split*len(pieces)):len(pieces)]
@@ -386,7 +386,7 @@ def train_abc_pieces1(text_path,batch_size,seq_length,load=False,model_path='',l
         model.layers[0].trainable=False
     else:
         model=build_model3(batch_size, n_vocab,lstm_size=lstm_size,lstm_no=lstm_no,dropout_rate=dropout)
-        optimizer=tf.keras.optimizers.Adam(learning_rate=0.001)
+        optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001)
         model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer,metrics=['accuracy'])
     
     model.summary()
@@ -534,17 +534,17 @@ def train_abc_pieces3(text_path,batch_size,load=False,model_path='',lstm_no=1,ls
     del pieces
     val_split=0.1
     pieces_train_c=pieces_c[0:len(pieces_c)-int(val_split*len(pieces_c))]
-    for i in pieces_train_c:
-        pieces_train.append(i)
-        half=int(len(i)/2)
-        pieces_train.append(i[:half])
-        pieces_train.append(i[half:])
+    #for i in pieces_train_c:
+    #    pieces_train.append(i)
+    #    half=int(len(i)/2)
+    #    pieces_train.append(i[:half])
+    #    pieces_train.append(i[half:])
     pieces_validate_c=pieces_c[len(pieces_c)-int(val_split*len(pieces_c)):len(pieces_c)]
-    for i in pieces_validate_c:
-        pieces_validate.append(i)
-        half=int(len(i)/2)
-        pieces_validate.append(i[:half])
-        pieces_validate.append(i[half:])
+    #for i in pieces_validate_c:
+    #    pieces_validate.append(i)
+    #    half=int(len(i)/2)
+    #    pieces_validate.append(i[:half])
+    #    pieces_validate.append(i[half:])
     #pieces_train_csharp=pieces_csharp[0:len(pieces_csharp)-int(val_split*len(pieces_csharp))]
     #pieces_validate_csharp=pieces_csharp[len(pieces_csharp)-int(val_split*len(pieces_csharp)):len(pieces_csharp)]
     #pieces_train=pieces_train_c
@@ -552,8 +552,8 @@ def train_abc_pieces3(text_path,batch_size,load=False,model_path='',lstm_no=1,ls
     del pieces_c
     #train_loader=Data_Gen_Text_Pieces(pieces_train,batch_size=batch_size,seq_length=seq_length,n_vocab=n_vocab,dictionary=char_indices)
     #val_loader=Data_Gen_Text_Pieces(pieces_validate,batch_size=batch_size,seq_length=seq_length,n_vocab=n_vocab,dictionary=char_indices)
-    train_loader=Data_Gen_Text_Pieces2(pieces_train,batch_size, dictionary=dictionary,shuffle=shuffle)
-    val_loader=Data_Gen_Text_Pieces2(pieces_validate,batch_size, dictionary=dictionary,shuffle=shuffle)
+    train_loader=Data_Gen_Text_Pieces2(pieces_train_c,batch_size, dictionary=dictionary,shuffle=shuffle)
+    val_loader=Data_Gen_Text_Pieces2(pieces_validate_c,batch_size, dictionary=dictionary,shuffle=shuffle)
 
     del pieces_train,pieces_validate
     del pieces_train_c
@@ -591,7 +591,7 @@ def train_abc_pieces3(text_path,batch_size,load=False,model_path='',lstm_no=1,ls
         model=load_model(model_path)
     else:
         model=build_model3(batch_size, n_vocab,lstm_size=lstm_size,lstm_no=lstm_no,dropout_rate=dropout)
-        optimizer=tf.keras.optimizers.Adam(learning_rate=0.001)
+        optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001)
         #optimizer=tf.keras.optimizers.RMSprop(learning_rate=0.003,clipnorm=5)
         model.compile(loss='sparse_categorical_crossentropy', optimizer=optimizer,metrics=['accuracy'])
     model.summary()
@@ -607,8 +607,8 @@ if __name__=='__main__':
     ##train_abc_pieces2(text_path,64,lstm_no=3,lstm_size=512,dropout=0.5,epochs=50,split_pieces=True)
     #lstm_no=1
     batch_size=256
-    train_abc_pieces3(text_path, batch_size,lstm_no=1,lstm_size=32,dropout=0.2,epochs=200)
-    #train_abc_pieces1(text_path,batch_size,100,lstm_no=lstm_no,lstm_size=32,dropout=0.2,epochs=50)
+    #train_abc_pieces2(text_path, batch_size,lstm_no=1,lstm_size=32,dropout=0.2,epochs=200)
+    train_abc_pieces1(text_path,batch_size,100,lstm_no=1,lstm_size=32,dropout=0.2,epochs=200)
     #train_abc_pieces1(text_path, batch_size, 100,lstm_no=1,lstm_size=32,dropout=0.2,epochs=200)
     #train_abc_pieces1(text_path, batch_size, 100,lstm_no=2,lstm_size=256,dropout=0.3,epochs=200)
     #train_abc_pieces1(text_path, batch_size, 100,lstm_no=1,lstm_size=32,dropout=0.2,epochs=200)

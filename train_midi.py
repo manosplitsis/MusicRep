@@ -235,7 +235,7 @@ class Data_Gen_Midi3(Sequence):
 
     def __getitem__(self, idx):
         batch_ids=self.note_ids[self.batch_size*idx:self.batch_size*(idx+1)]
-        batch=self.notes[batch_ids]
+        batch=[self.notes[i] for i in batch_ids]
         #batch=self.notes[self.batch_size*idx:self.batch_size*(idx+1)]
         batch_x_midi =np.array([batch[i][:-1] for i in range(self.batch_size)])
         batch_y_midi =np.array([batch[i][1:] for i in range(self.batch_size)])
@@ -273,7 +273,7 @@ def train_with_loader(notes_path,batch_size,seq_length,epochs=50,load=False,all_
     print(ftime)
     notes_name=os.path.basename(notes_path)
     notes=pd.read_pickle(notes_path)
-    notes=notes[:12117]
+    #notes=notes[:12117]
     notes=add_piece_start_stop(notes)
     
     print('Notes read')
@@ -394,25 +394,25 @@ def train_with_loader2(notes_path,batch_size,epochs=50,load=False,all_notes=Fals
       pickle.dump(dictionary, filepath)
     
     
-    pieces_c=pieces[:22925]
-    pieces_csharp=pieces[22925:]
+    pieces_c=pieces[:12117]
+    pieces_csharp=pieces[12117:]
     del pieces
     
     val_split=0.1
     pieces_train_c=pieces_c[0:len(pieces_c)-int(val_split*len(pieces_c))]
     pieces_validate_c=pieces_c[len(pieces_c)-int(val_split*len(pieces_c)):len(pieces_c)]
-    pieces_train_csharp=pieces_csharp[0:len(pieces_csharp)-int(val_split*len(pieces_csharp))]
-    pieces_validate_csharp=pieces_csharp[len(pieces_csharp)-int(val_split*len(pieces_csharp)):len(pieces_csharp)]
-    pieces_train=pieces_train_c+pieces_train_csharp
-    pieces_validate=pieces_validate_c+pieces_validate_csharp
+    #pieces_train_csharp=pieces_csharp[0:len(pieces_csharp)-int(val_split*len(pieces_csharp))]
+    #pieces_validate_csharp=pieces_csharp[len(pieces_csharp)-int(val_split*len(pieces_csharp)):len(pieces_csharp)]
+    #pieces_train=pieces_train_c+pieces_train_csharp
+    #pieces_validate=pieces_validate_c+pieces_validate_csharp
     del pieces_c,pieces_csharp
     
     #notes_train=notes[0:len(notes)-int(val_split*len(notes))]
     #notes_validate=notes[len(notes)-int(val_split*len(notes)):len(notes)]
     #del notes
     
-    train_loader=Data_Gen_Midi3(pieces_train,dictionary,batch_size=batch_size,shuffle=shuffle)
-    val_loader=Data_Gen_Midi3(pieces_validate,dictionary,batch_size=batch_size,shuffle=shuffle)
+    train_loader=Data_Gen_Midi3(pieces_train_c,dictionary,batch_size=batch_size,shuffle=shuffle)
+    val_loader=Data_Gen_Midi3(pieces_validate_c,dictionary,batch_size=batch_size,shuffle=shuffle)
     #del notes_train
     #del notes_validate
 
@@ -483,11 +483,11 @@ if __name__=='__main__':
     
 '''
 if __name__=='__main__':
-    notes_path='notes/notes_event1_res8_44'
-    train_with_loader(notes_path, 256, 100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2)
-    notes_path='notes/notes_tstep1_res8_44'
-    train_with_loader(notes_path, 256, 100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2)
-    notes_path='notes/notes_tstep1_res8_44'
-    train_with_loader(notes_path, 256, 100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,all_notes=True)
-    notes_path='notes/notes_event1_res8_44'
-    train_with_loader(notes_path, 256, 100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,all_notes=True)
+    #notes_path='notes/notes_event1_res8_44'
+    #train_with_loader(notes_path, 256, 100,epochs=200,lstm_size=64,lstm_no=2,dropout=0.4)
+    notes_path='notes/notes_event1_res8_c44'
+    train_with_loader(notes_path, 256,100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,learning_rate=0.001)
+    notes_path='notes/notes_tstep1_res8_c44'
+    train_with_loader(notes_path, 256,100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,learning_rate=0.001)
+    #notes_path='notes/notes_event1_res8_44'
+    #train_with_loader(notes_path, 256, 100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,all_notes=True)
