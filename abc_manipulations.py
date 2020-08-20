@@ -6,11 +6,11 @@ Created on Sat Aug  8 19:37:27 2020
 """
 import pandas as pd
 from util import load_doc
-notes_path='notes/notes_event1_res8'
+notes_path='notes/notes_event1_res8_c44'
 notes_event=pd.read_pickle(notes_path)
-notes_path='notes/notes_tstep1_res8'
+notes_path='notes/notes_tstep1_res8_c44'
 notes_tstep=pd.read_pickle(notes_path)
-text_path='data/text_c_44'
+text_path='data/data_v3_X'
 text=load_doc(text_path)
 pieces=text.split('\n\n')
 
@@ -126,6 +126,24 @@ def keep_only_with(text,string):
     for i in keepers[1:]:
         newtxt+='\n\n'+i
     return newtxt,indices
+
+def remove_pieces_with(text,string):
+    pieces=text.split('\n\n')
+    del text
+    remove=[]
+    indices=[]
+    for i,piece in enumerate(pieces):
+        for line in piece.splitlines():
+            if line.startswith(string):
+                remove.append(piece)
+                indices.append(i)
+                continue
+    newpieces=[]
+    for i,p in enumerate(pieces):
+        if i not in indices:
+            newpieces.append(p)
+    newtxt=glue_pieces(newpieces)
+    return newtxt
 
 def glue_pieces(pieces):
     text=''
