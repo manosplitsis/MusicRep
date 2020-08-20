@@ -486,8 +486,8 @@ if __name__=='__main__':
     #notes_path='notes/notes_event1_res8_44'
     #train_with_loader(notes_path, 256, 100,epochs=200,lstm_size=64,lstm_no=2,dropout=0.4)
     notes_path='notes/notes_event1_res8_c44'
-    train_with_loader(notes_path, 256,100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,learning_rate=0.001)
+    train_with_loader(notes_path, 256,100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,learning_rate=0.0001)
     notes_path='notes/notes_tstep1_res8_c44'
-    train_with_loader(notes_path, 256,100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,learning_rate=0.001)
+    train_with_loader(notes_path, 256,100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,learning_rate=0.0001)
     #notes_path='notes/notes_event1_res8_44'
     #train_with_loader(notes_path, 256, 100,epochs=200,lstm_size=32,lstm_no=1,dropout=0.2,all_notes=True)
